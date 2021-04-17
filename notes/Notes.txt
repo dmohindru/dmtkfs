@@ -1,0 +1,50 @@
+SECTION 2: SETUP AND A BRIEF EXPLANATION OF KERNEL DEVELOPMENT
+--------------------------------------------------------------
+Steps to a booted system
+
+1. BIOS is executed directly from ROM
+2. BIOS load bootloader directly into memory address 0X7C00
+3. The Bootloader loads the kernel
+
+Responsibility of bootload
+1. Put us into 32 bit protected mode which will give access us to 4GB of memory.
+2. Load the kernel into memory.
+3. Executes the kernel.
+
+BIOS Search process for bootloader
+1. BIOS looks for bootloader by searching all storage medium with boot signature 0X55AA.
+2. BIOS looks in first sector of each storage device for bootloader.
+3. BIOS looks at 511 and 512 bytes of storage medium and if these bytes matches 0X55AA then bios has found bootloader.
+4. BIOS contains routines to assist our bootloader in booting our kernel.
+5. BIOS is 16 bit code.
+6. BIOS routines are generic and standard. This means that a same bootloader can communicate with many different bios.
+
+Software needed for this course
+1. nasm. Command sudo apt install nasm
+2. qemu. Command sudo apt install qemu-system-x86
+
+SECTION 3: REAL MODE DEVELOPMENT
+---------------------------------
+Command to assemble a bootloader
+nasm -f bin boot.asm -o boot.bin
+
+Command to disassemble a bin file
+ndisasm boot.bin
+
+Command to boot a virtual machine
+qemu-system-x86_64 -hda boot.bin
+
+Command to burn bootloader on usb stick
+sudo fdisk -l
+sudo dd if=./boot.bin of=/dev/sdb
+
+Hex editor used
+bless
+
+SECTION 4: PROTECTED MODE DEVELOPMENT
+-------------------------------------
+Start a gdb
+gdb
+
+Attaching a gdb to qemu system
+target remote | qemu_system-x86_64 -hda ./boot.bin -S -gdb stdio

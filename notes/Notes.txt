@@ -48,3 +48,37 @@ gdb
 
 Attaching a gdb to qemu system
 target remote | qemu_system-x86_64 -hda ./boot.bin -S -gdb stdio
+
+Command to build gcc cross compiler
+Follow instruction on this link
+https://wiki.osdev.org/GCC_Cross-Compiler
+Install build-essentials
+sudo apt install build-essential
+
+Install bison
+sudo apt install bison
+
+Install flex
+sudo apt install flex
+
+Install libgmp3-dev
+sudo apt install libgmp3-dev
+
+Install libmpc-dev
+sudo apt install libmpc-dev
+
+Install libmpfr-dev
+sudo apt install libmpfr-dev
+
+Install texinfo
+sudo apt install texinfo
+
+Install libcloog-isl-dev
+sudo apt install libcloog-isl-dev
+
+Install libisl-dev
+sudo apt install libisl-dev
+
+Install bin utils
+
+Install gcc

@@ -29,7 +29,7 @@ step2:
     mov eax, cr0
     or eax, 0x1
     mov cr0, eax
-    ;jmp CODE_SEG:load32
+    jmp CODE_SEG:load32
     jmp $
 
 ; GDT
@@ -60,6 +60,55 @@ gdt_descriptor:
     dd gdt_start
 
 ; 32 bit code starts here
+[BITS 32]
+load32:             ; our driver to load kernel into memory
+    mov eax, 1      ; starting sector
+    mov ecx, 100    ; endig sector
+    mov edi, 0x0100000 ; total bytes to read
+    ; OS Dev ATA
+    call ata_lba_read  ; store at this address
+
+ata_lba_read:
+    mov ebx, eax; Backupt LBA
+    ; Send the higest 8 bits of the lba to hard disk controller
+    shr eax, 24
+    mov dx, 0X1F6
+    out dx, al
+    ; Finished sending the highest 8 bits of the lba
+
+    ; Send the total sectors to read
+    mov eax, ecx
+    mov dx, 0x1F2
+    out dx, al
+    ; Finish sending the total sectors to read
+
+    ; Send more bits of the LBA
+    mov eax, ebx
+    mov dx, 0x1F3
+    out dx, al
+    ; Finish sending more bits of the LBA
+
+    ; Sending more bits of the LBA
+    mov dx, 0x1F4
+    mov eax, ebx ; Restore the backup LBA
+    shr eax, 8
+    out dx, al
+    ; Finish sending more bits of the LBA
+
+    ; Send upper 16 bits of the LBA
+    mov dx, 0x1F5
+    mov eax, ebx
+    shr eax, 16
+    out dx, al
+    ; Finish sending upper 16 bits of the LBA
+
+    mov dx, 0x1f7
+    mov al, 0x20
+    out dx, al
+
+    ; Read all sectors into memory
+
+
 
 ; 32 bit code ends here
 

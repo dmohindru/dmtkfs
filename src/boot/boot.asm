@@ -112,7 +112,7 @@ ata_lba_read:
 .next_sector:
     push ecx
 
-    ; Check if we need to read
+    ; Check if we need to wait
 .try_again
     mov dx, 0x1f7
     in al, dx

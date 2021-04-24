@@ -64,14 +64,16 @@ gdt_descriptor:
 load32:             ; our driver to load kernel into memory
     mov eax, 1      ; starting sector
     mov ecx, 100    ; endig sector
-    mov edi, 0x0100000 ; total bytes to read
+    mov edi, 0x0100000 ; address where kernel is loaded
     ; OS Dev ATA
     call ata_lba_read  ; store at this address
+    jmp CODE_SEG:0x0100000
 
 ata_lba_read:
     mov ebx, eax; Backupt LBA
     ; Send the higest 8 bits of the lba to hard disk controller
     shr eax, 24
+    or eax, 0XE0 ; Select the master drive
     mov dx, 0X1F6
     out dx, al
     ; Finished sending the highest 8 bits of the lba
@@ -107,10 +109,25 @@ ata_lba_read:
     out dx, al
 
     ; Read all sectors into memory
+.next_sector:
+    push ecx
 
+    ; Check if we need to read
+.try_again
+    mov dx, 0x1f7
+    in al, dx
+    test al, 8
+    jz .try_again
 
+; We need to read 256 words at a time
+    mov ecx, 256
+    mov dx, 0x1F0
+    rep insw
+    pop ecx
+    loop .next_sector
+    ; End of reading sectors into memory
+    ret
 
-; 32 bit code ends here
 
 times 510 - ($ - $$) db 0
 dw 0xAA55

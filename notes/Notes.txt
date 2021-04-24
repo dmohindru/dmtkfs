@@ -82,3 +82,6 @@ sudo apt install libisl-dev
 Install bin utils
 
 Install gcc
+
+add gdb to kernel 
+add-symbol-file ./build/kernelfull.o 0x100000
